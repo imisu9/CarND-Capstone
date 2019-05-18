@@ -59,7 +59,7 @@ class WaypointUpdater(object):
         closest_idx = self.waypoint_tree.query([x, y], 1)[1]
         
         # Check if closest is ahead or behind vehicle
-        closest_coord = self.wayponts_2d[closest_idx]
+        closest_coord = self.waypoints_2d[closest_idx]
         prev_cooord = self.waypoints_2d[closest_idx-1]
         
         # Equation for hyperplane through closest_coords
@@ -70,7 +70,7 @@ class WaypointUpdater(object):
         val = np.dot(cl_vect-prev_vect, pos_vect-cl_vect)
         
         if val > 0:
-            closest_idx = (closest_idx + 1) % len(self.wayponts_2d)
+            closest_idx = (closest_idx + 1) % len(self.waypoints_2d)
         return closest_idx
     
     def publish_waypoints(self, closest_idx):
@@ -87,7 +87,7 @@ class WaypointUpdater(object):
         # TODO: Implement
         self.base_waypoints = waypoints
         if not self.waypoints_2d:
-            self.waypoints_2d = [[waypoint.pose.pose.position.x, waypont.pose.pose.position.y] for waypoint in waypoints.waypoints]
+            self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
             self.waypoint_tree = KDTree(self.waypoints_2d)
 
     def traffic_cb(self, msg):
