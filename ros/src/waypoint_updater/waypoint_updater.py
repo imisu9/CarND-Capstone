@@ -1,23 +1,21 @@
 #!/usr/bin/env python
 
+import numpy as np
 import rospy
 from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
+from scipy.spatial import KDTree
 
 import math
 
 '''
 This node will publish waypoints from the car's current position to some `x` distance ahead.
-
 As mentioned in the doc, you should ideally first implement a version which does not care
 about traffic lights or obstacles.
-
 Once you have created dbw_node, you will update this node to use the status of traffic lights too.
-
 Please note that our simulator also provides the exact location of traffic lights and their
 current status in `/vehicle/traffic_lights` message. You can use this message to build this node
 as well as to verify your TL classifier.
-
 TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
@@ -41,12 +39,12 @@ class WaypointUpdater(object):
         self.waypoints_2d = None
         self.waypoint_tree = None
 
-        rospy.loop()
+        self.loop()
 
     def loop(self):
         # Could go down to around 30 Hz
         rate = rospy.Rate(50)
-        while not rospy.it_shutdown():
+        while not rospy.is_shutdown():
             if self.pose and self.base_waypoints:
                 # Get closest waypoint
                 closest_waypoint_idx = self.get_closest_waypoint_idx()
@@ -60,7 +58,7 @@ class WaypointUpdater(object):
         
         # Check if closest is ahead or behind vehicle
         closest_coord = self.waypoints_2d[closest_idx]
-        prev_cooord = self.waypoints_2d[closest_idx-1]
+        prev_coord = self.waypoints_2d[closest_idx-1]
         
         # Equation for hyperplane through closest_coords
         cl_vect = np.array(closest_coord)
